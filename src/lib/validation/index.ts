@@ -2,10 +2,6 @@ import type { Constraint, ValidationOutcome } from "./types";
 import { evaluateConstraints } from "./z3engine";
 
 export * from "./types";
-export {
-  buildRouteFeasibilityConstraints,
-  buildThermalConstraints,
-} from "./constraints";
 
 /**
  * Evaluate a constraint set deterministically and produce a full validation

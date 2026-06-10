@@ -6,8 +6,8 @@ import type { ParsedRule } from "@/lib/engine-core/types";
 export const runtime = "nodejs";
 export const maxDuration = 30;
 
-const SYSTEM_PROMPT = `You translate plain-English logistics business rules into a structured, machine-checkable form. Respond ONLY with JSON:
-{"structured": "<rule in the form 'rule R_new: <conditions> -> <consequences>' using attribute paths like shipment.cargo_class, shipment.eta_hours_from_dispatch, shipment.customer.priority, require notify(...), require approval(...)>", "scope": "<one of: Cold chain, Hazmat routing, Service level, Customer communication, Workforce compliance, Cost control, Carrier compliance, General>"}
+const SYSTEM_PROMPT = `You translate plain-English field-service business rules into a structured, machine-checkable form. Respond ONLY with JSON:
+{"structured": "<rule in the form 'rule R_new: <conditions> -> <consequences>' using attribute paths like job.priority, job.site.customer.sla, job.technician.certs, job.response_hours, technician.day_hours, require notify(...), require approval(...)>", "scope": "<one of: Certifications, Service level, Workforce compliance, Parts & inventory, Customer communication, Safety, Cost control, General>"}
 Keep the structured form short, deterministic, and faithful to the text. Do not invent thresholds.`;
 
 export async function POST(req: Request) {

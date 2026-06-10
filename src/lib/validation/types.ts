@@ -8,7 +8,8 @@ export type ConstraintKind =
   | "prohibited_zone"
   | "capacity"
   | "risk_threshold"
-  | "sla_delay";
+  | "sla_delay"
+  | "rule_check";
 
 /** A constraint expressed declaratively, before evaluation. */
 export interface Constraint {
