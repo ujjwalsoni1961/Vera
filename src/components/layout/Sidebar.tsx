@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { navItems } from "@/lib/nav";
-import { Logo } from "./Logo";
+import { Logo, VeraMark } from "./Logo";
 import { cn } from "@/lib/utils";
 
 export function Sidebar() {
@@ -25,13 +25,7 @@ export function Sidebar() {
           collapsed ? "justify-center px-0" : "px-4"
         )}
       >
-        {collapsed ? (
-          <div className="flex h-6 w-6 items-center justify-center rounded-md bg-ink text-[12px] font-semibold text-white">
-            V
-          </div>
-        ) : (
-          <Logo />
-        )}
+        {collapsed ? <VeraMark size={22} /> : <Logo />}
       </div>
 
       <nav className="flex-1 space-y-0.5 px-2 py-3">

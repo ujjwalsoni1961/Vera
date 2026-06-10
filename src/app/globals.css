@@ -44,3 +44,12 @@ body {
 .react-flow__node {
   font-family: inherit;
 }
+
+/* Vera mark breathing animation (agent thinking / loaders) */
+@keyframes vera-breathe {
+  0%, 100% { opacity: 0.35; transform: scale(0.94); }
+  50% { opacity: 1; transform: scale(1); }
+}
+.vera-breathe {
+  animation: vera-breathe 1.6s ease-in-out infinite;
+}

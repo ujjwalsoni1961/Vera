@@ -7,6 +7,8 @@ import { Textarea } from "@/components/ui/input";
 import { ReasoningSteps } from "./ReasoningSteps";
 import { ActionCard } from "./ActionCard";
 import { ReferenceProvider } from "./ReferenceChip";
+import { ComposerIntegrations } from "./ComposerIntegrations";
+import { VeraMark, VeraThinking } from "@/components/layout/Logo";
 import { reason, type Decision, type ReasoningStep } from "@/lib/engine";
 
 const EXAMPLE_TASKS = [
@@ -108,6 +110,7 @@ export function AgentWorkspace() {
           <div className="flex-1 overflow-y-auto px-6 py-6">
             {thread.length === 0 ? (
               <div className="mx-auto flex h-full max-w-xl flex-col justify-center">
+                <VeraMark size={32} className="mb-4" />
                 <h1 className="text-xl font-semibold tracking-tight text-ink">
                   What should the agent handle?
                 </h1>
@@ -145,15 +148,21 @@ export function AgentWorkspace() {
                       </p>
                     </div>
                   ) : (
-                    <motion.p
+                    <motion.div
                       key={i}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="text-[13px] leading-relaxed text-ink-secondary"
+                      className="flex items-start gap-2.5"
                     >
-                      {item.text}
-                    </motion.p>
+                      <VeraMark size={16} className="mt-0.5 shrink-0" />
+                      <p className="text-[13px] leading-relaxed text-ink-secondary">
+                        {item.text}
+                      </p>
+                    </motion.div>
                   )
+                )}
+                {phase === "working" && (
+                  <VeraThinking size={16} label="Reasoning…" className="pl-0" />
                 )}
                 <div ref={threadEndRef} />
               </div>
@@ -174,8 +183,11 @@ export function AgentWorkspace() {
                       submit();
                     }
                   }}
-                  className="pr-11"
+                  className="pl-11 pr-11"
                 />
+                <div className="absolute bottom-2.5 left-2.5">
+                  <ComposerIntegrations />
+                </div>
                 <button
                   onClick={() => submit()}
                   disabled={!input.trim() || phase === "working"}
@@ -193,9 +205,7 @@ export function AgentWorkspace() {
         <section className="flex w-[44%] max-w-2xl shrink-0 flex-col max-lg:hidden">
           <div className="flex h-11 shrink-0 items-center justify-between border-b border-line px-5">
             <span className="text-[13px] font-medium text-ink">Reasoning</span>
-            {phase === "working" && (
-              <span className="text-xxs text-ink-muted">Working</span>
-            )}
+            {phase === "working" && <VeraThinking size={14} label="Working" />}
           </div>
           <div className="flex-1 overflow-y-auto px-5 py-2">
             <AnimatePresence>
