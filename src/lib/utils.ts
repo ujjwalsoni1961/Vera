@@ -1,35 +1,17 @@
 import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]): string {
-  return clsx(inputs);
-}
-
-export function formatLatency(ms: number): string {
-  if (ms < 1000) return `${Math.round(ms)}ms`;
-  return `${(ms / 1000).toFixed(2)}s`;
-}
-
-export function formatTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    });
-  } catch {
-    return iso;
-  }
+  return twMerge(clsx(inputs));
 }
 
 export function formatDateTime(iso: string): string {
   try {
-    return new Date(iso).toLocaleString("en-US", {
+    return new Date(iso).toLocaleString("en-GB", {
       month: "short",
       day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
-      second: "2-digit",
       hour12: false,
     });
   } catch {

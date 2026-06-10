@@ -1,35 +1,14 @@
-export function Logo({ size = 28 }: { size?: number }) {
+import { cn } from "@/lib/utils";
+
+export function Logo({ className }: { className?: string }) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 32 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <rect width="32" height="32" rx="8" fill="url(#vera-grad)" />
-      <path
-        d="M9 9.5L16 22.5L23 9.5"
-        stroke="white"
-        strokeWidth="2.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <circle cx="16" cy="16" r="1.9" fill="white" />
-      <defs>
-        <linearGradient
-          id="vera-grad"
-          x1="0"
-          y1="0"
-          x2="32"
-          y2="32"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#10b88a" />
-          <stop offset="1" stopColor="#069471" />
-        </linearGradient>
-      </defs>
-    </svg>
+    <div className={cn("flex items-center gap-2", className)}>
+      <div className="flex h-6 w-6 items-center justify-center rounded-md bg-ink text-[12px] font-semibold text-white">
+        V
+      </div>
+      <span className="text-[14px] font-semibold tracking-tight text-ink">
+        Vera
+      </span>
+    </div>
   );
 }
