@@ -10,6 +10,7 @@ const nextConfig = {
     // function so the solver can initialise in production (not just locally).
     outputFileTracingIncludes: {
       "/api/run": ["./node_modules/z3-solver/build/**"],
+      "/api/v1/reason": ["./node_modules/z3-solver/build/**"],
     },
   },
   webpack: (config) => {
