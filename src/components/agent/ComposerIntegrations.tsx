@@ -8,6 +8,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { StatusDot } from "@/components/ui/status-dot";
+import { useConnections } from "@/lib/connections";
 
 interface SourceRow {
   name: string;
@@ -16,40 +17,50 @@ interface SourceRow {
   detail: string;
 }
 
-const SOURCES: SourceRow[] = [
-  {
-    name: "NordRetail TMS",
-    kind: "Transport management",
-    state: "connected",
-    detail: "Shipments, routes, carrier assignments",
-  },
-  {
-    name: "Telematics feed",
-    kind: "Vehicle telemetry",
-    state: "connected",
-    detail: "Position, temperature, door events",
-  },
-  {
-    name: "Rulebook",
-    kind: "Operating rules",
-    state: "connected",
-    detail: "Active constraints applied to every decision",
-  },
-  {
-    name: "Memory graph",
-    kind: "Knowledge graph",
-    state: "connected",
-    detail: "Ports, lanes, carriers, customers",
-  },
-  {
-    name: "ERP",
-    kind: "Orders & invoicing",
-    state: "available",
-    detail: "Connect in Settings",
-  },
-];
-
 export function ComposerIntegrations() {
+  const connections = useConnections();
+
+  const sources: SourceRow[] = [
+    {
+      name: connections.fsm ?? "Field service system",
+      kind: "Field service",
+      state: connections.fsm ? "connected" : "available",
+      detail: connections.fsm
+        ? "Work orders, technicians, scheduling"
+        : "Connect in Settings",
+    },
+    {
+      name: connections.telematics
+        ? `${connections.telematics} telematics`
+        : "Telematics",
+      kind: "Vehicle telemetry",
+      state: connections.telematics ? "connected" : "available",
+      detail: connections.telematics
+        ? "Van positions, driving logs"
+        : "Connect in Settings",
+    },
+    {
+      name: "Rulebook",
+      kind: "Operating rules",
+      state: "connected",
+      detail: "Active constraints applied to every decision",
+    },
+    {
+      name: "Memory graph",
+      kind: "Knowledge graph",
+      state: "connected",
+      detail: "Sites, technicians, equipment, customers",
+    },
+    {
+      name: connections.erp ?? "ERP",
+      kind: "Orders & invoicing",
+      state: connections.erp ? "connected" : "available",
+      detail: connections.erp
+        ? "Parts inventory, purchase orders"
+        : "Connect in Settings",
+    },
+  ];
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -65,9 +76,9 @@ export function ComposerIntegrations() {
           Connected sources
         </p>
         <ul>
-          {SOURCES.map((s) => (
+          {sources.map((s) => (
             <li
-              key={s.name}
+              key={s.kind}
               className="flex items-start gap-2.5 rounded-md px-2 py-1.5 hover:bg-zinc-50"
             >
               <StatusDot
@@ -81,19 +92,17 @@ export function ComposerIntegrations() {
                     {s.kind}
                   </span>
                 </p>
-                <p className="truncate text-xxs text-ink-tertiary">
-                  {s.detail}
-                </p>
+                <p className="text-xs text-ink-muted">{s.detail}</p>
               </div>
             </li>
           ))}
         </ul>
-        <div className="mt-1 border-t border-line px-2 pb-1 pt-2">
+        <div className="mt-1 border-t border-line pt-1">
           <Link
             href="/settings"
-            className="inline-flex items-center gap-1.5 text-xxs text-ink-secondary hover:text-ink"
+            className="flex items-center gap-2 rounded-md px-2 py-1.5 text-xs text-ink-secondary transition-colors hover:bg-zinc-50 hover:text-ink"
           >
-            <Settings2 className="h-3 w-3" strokeWidth={1.75} />
+            <Settings2 className="h-3.5 w-3.5" />
             Manage connections
           </Link>
         </div>

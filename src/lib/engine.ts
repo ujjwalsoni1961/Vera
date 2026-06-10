@@ -89,15 +89,59 @@ export async function reason(
   context?: Record<string, unknown>
 ): Promise<Decision> {
   if (getEngineMode() === "live") {
-    return http<Decision>("/v1/reason", {
-      method: "POST",
-      body: JSON.stringify({ task, context: context ?? {} }),
-    });
+    try {
+      return await http<Decision>("/v1/reason", {
+        method: "POST",
+        body: JSON.stringify({ task, context: context ?? {} }),
+      });
+    } catch {
+      // Engine unreachable: degrade to the local snapshot so work continues.
+    }
   }
   await delay(450 + Math.random() * 350);
+  return mockReason(task);
+}
+
+function mockReason(task: string): Decision {
   const q = task.toLowerCase();
   const hit = scenarios.find((s) => s.match.some((m) => q.includes(m)));
-  return structuredClone(hit ? hit.decision : fallbackDecision);
+  if (hit) return structuredClone(hit.decision);
+  if (looksLikePolicy(task)) return policyDecision(task);
+  return structuredClone(fallbackDecision);
+}
+
+/** A task that states an operating policy rather than asking for work. */
+function looksLikePolicy(text: string): boolean {
+  if (text.includes("?") || text.length > 260) return false;
+  return /\b(always|never|must|require[sd]?|from now on|going forward|new (rule|policy)|policy)\b/i.test(
+    text
+  );
+}
+
+function policyDecision(task: string): Decision {
+  const parsed = mockParseRule(task);
+  return {
+    status: "informational",
+    summary:
+      "This reads as an operating policy rather than a one-off task, so I drafted it as a rule. Confirm below and it will constrain every future decision.",
+    action: "Add the stated policy to the rulebook.",
+    references: [],
+    learnedRule: parsed,
+    steps: [
+      {
+        text: "Classified the message as a standing policy: it states a condition that should hold in general, not a change to today's board.",
+        references: [],
+      },
+      {
+        text: `Parsed it into a machine-checkable form under scope “${parsed.scope}” and checked for conflicts with the existing rulebook — none found.`,
+        references: [],
+      },
+      {
+        text: "Once confirmed, the solver applies it to every future decision alongside the existing rules.",
+        references: [],
+      },
+    ],
+  };
 }
 
 /** Parse a plain-English rule into its structured form for confirmation. */
@@ -121,12 +165,16 @@ export async function listRules(): Promise<Rule[]> {
 }
 
 /** Persist a confirmed rule (mock mode: browser-local). */
-export async function saveRule(parsed: ParsedRule): Promise<Rule> {
+export async function saveRule(
+  parsed: ParsedRule,
+  source: Rule["source"] = "workspace"
+): Promise<Rule> {
   const added = readLocal<Rule>(RULES_KEY);
   const rule: Rule = {
     id: `R${seedRules.length + added.length + 1}`,
     ...parsed,
     updatedAt: new Date().toISOString(),
+    source,
   };
   if (getEngineMode() === "live") {
     return http<Rule>("/v1/rules", {
@@ -191,49 +239,60 @@ export function mockParseRule(text: string): ParsedRule {
   const cleaned = text.trim().replace(/\s+/g, " ");
 
   let scope = "General";
-  if (/(temp|refriger|cold|reefer|degree)/.test(t)) scope = "Cold chain";
-  else if (/(hazard|hazmat|dangerous|adr|residential)/.test(t))
-    scope = "Hazmat routing";
-  else if (/(notify|notification|customer|inform)/.test(t))
-    scope = "Customer communication";
-  else if (/(driver|duty|rest|hours of service)/.test(t))
+  if (/(cert|permit|tukes|f-gas|fgas|refriger|s2|electric)/.test(t))
+    scope = "Certifications";
+  else if (/(hour|working time|overtime|shift|rest)/.test(t))
     scope = "Workforce compliance";
-  else if (/(cost|euro|eur|budget|approval)/.test(t)) scope = "Cost control";
-  else if (/(insur|carrier|tier)/.test(t)) scope = "Carrier compliance";
-  else if (/(window|deliver|eta|hour)/.test(t)) scope = "Service level";
+  else if (/(sla|response|emergency|p1|priority|breach)/.test(t))
+    scope = "Service level";
+  else if (/(part|stock|inventory|van|depot)/.test(t))
+    scope = "Parts & inventory";
+  else if (/(notify|notification|customer|resident|confirm|window)/.test(t))
+    scope = "Customer communication";
+  else if (/(safety|live|pair|two people|alone)/.test(t)) scope = "Safety";
+  else if (/(cost|euro|eur|€|budget|approval)/.test(t)) scope = "Cost control";
 
   const num = (re: RegExp): string | null => {
     const m = t.match(re);
     return m ? m[1].replace(/[,. ](?=\d{3})/g, "") : null;
   };
 
-  const hours = num(/(\d+)\s*(?:hours|hour|h)\b/);
-  const degrees = num(/(\d+(?:\.\d+)?)\s*(?:degrees|°c|c\b)/);
+  const hours = num(/(\d+(?:\.\d+)?)\s*(?:hours|hour|h)\b/);
+  const minutes = num(/(\d+)\s*(?:minutes|min)\b/);
   const euros = num(/([\d,. ]*\d)\s*(?:euros|eur|€)/);
+  const days = num(/(\d+)\s*(?:business )?days?\b/);
 
   const conditions: string[] = [];
-  if (/(hazard|hazmat|dangerous)/.test(t))
-    conditions.push("shipment.cargo_class = hazardous");
-  if (/refriger|reefer|cold/.test(t))
-    conditions.push("shipment.cargo_class = refrigerated");
-  if (/priority/.test(t)) conditions.push("shipment.customer.priority = true");
-  if (euros && /(above|over|exceed|more than)/.test(t))
-    conditions.push(`shipment.declared_value_eur > ${euros}`);
+  if (/(p1|emergency|fault|alarm)/.test(t)) conditions.push("job.priority = P1");
+  if (/gold/.test(t)) conditions.push("job.site.customer.sla = gold");
+  if (/(daycare|school|päiväkoti)/.test(t))
+    conditions.push("job.site.kind = daycare");
+  if (/residen/.test(t)) conditions.push("job.site.kind = residential");
+  if (/(gas|boiler)/.test(t)) conditions.push("job.equipment.fuel = gas");
+  if (/(refriger|cooler|f-gas|fgas)/.test(t))
+    conditions.push("job.tasks includes refrigerant_handling");
 
   const consequences: string[] = [];
-  if (degrees) consequences.push(`shipment.max_recorded_temp_c <= ${degrees}`);
-  if (hours && /(within|window|deliver)/.test(t))
-    consequences.push(`shipment.eta_hours_from_dispatch <= ${hours}`);
-  if (/not.*(residential|school|city centre|city center)/.test(t))
-    consequences.push(
-      "not exists z in shipment.route.zones : z.classification = residential"
-    );
-  if (/notify|notification|inform/.test(t))
-    consequences.push("require notify(shipment.customer)");
-  if (/approval|approve|sign[- ]?off/.test(t))
-    consequences.push("require approval(ops_manager)");
-  if (/tier[- ]?1|insur/.test(t) && euros)
-    consequences.push("shipment.carrier.insurance_tier = 1");
+  if (hours && /(within|respond|response|on site)/.test(t))
+    consequences.push(`job.response_hours <= ${hours}`);
+  else if (hours) consequences.push(`technician.day_hours <= ${hours}`);
+  if (minutes && /(assign|dispatch)/.test(t))
+    consequences.push(`job.assign_minutes <= ${minutes}`);
+  if (days) consequences.push(`job.rebook_days <= ${days}`);
+  if (/(cert|permit|tukes)/.test(t) && /gas/.test(t))
+    consequences.push("job.technician.certs includes tukes_gas");
+  if (/(f-gas|fgas|refriger)/.test(t))
+    consequences.push("job.technician.certs includes f_gas");
+  if (/(notify|notification|inform|confirm)/.test(t))
+    consequences.push("require notify(job.customer)");
+  if (/(approval|approve|sign[- ]?off)/.test(t))
+    consequences.push("require approval(service_manager)");
+  if (/(two people|second person|pair|not.*alone)/.test(t))
+    consequences.push("job.crew_size >= 2");
+  if (euros && /(above|over|exceed|more than)/.test(t))
+    consequences.push(`require approval if job.parts_cost_eur > ${euros}`);
+  if (/before 15|by 15:00|before 3 ?pm/.test(t))
+    consequences.push("job.start_time <= 15:00");
 
   const head = conditions.length ? conditions.join("\n  and ") : "true";
   const body = consequences.length

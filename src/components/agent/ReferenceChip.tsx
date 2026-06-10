@@ -64,10 +64,7 @@ export function ReferenceChip({ reference }: { reference: Reference }) {
   const rule = reference.type === "rule" ? rules.get(reference.id) : undefined;
   const entity = entities.get(reference.id);
 
-  const label = useMemo(
-    () => reference.id.replace(/^(Customer|Carrier|Zone|Port)-/, ""),
-    [reference.id]
-  );
+  const label = useMemo(() => reference.id, [reference.id]);
 
   return (
     <Popover>

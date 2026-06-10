@@ -5,20 +5,27 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 import { Textarea } from "@/components/ui/input";
 import { ReasoningSteps } from "./ReasoningSteps";
-import { ActionCard } from "./ActionCard";
+import { ActionCard, LearnedRuleCard } from "./ActionCard";
 import { ReferenceProvider } from "./ReferenceChip";
 import { ComposerIntegrations } from "./ComposerIntegrations";
 import { VeraMark, VeraThinking } from "@/components/layout/Logo";
 import { reason, type Decision, type ReasoningStep } from "@/lib/engine";
 
 const EXAMPLE_TASKS = [
-  "Port of Rotterdam is on strike until Thursday — handle today's affected shipments.",
-  "Which deliveries violate thermal constraints today?",
-  "Is Cargo Voyage-402 feasible on its current route?",
-  "Show all affected customers if Route Alpha becomes unavailable.",
+  "Mikko Virtanen called in sick — reassign his jobs for today.",
+  "Optimize this afternoon's routes for the Espoo crew.",
+  "Which jobs are at risk of breaching their SLA today?",
+  "Päiväkoti Vekkuli reports no heat — arrange an emergency callout.",
 ];
 
 type Phase = "idle" | "working" | "done" | "error";
+
+const ACTIVITY_LINES = [
+  "Connected to Takapulpetti FSM — work orders, technicians, scheduling",
+  "Querying today's job board…",
+  "Fetching van positions from ABAX telematics…",
+  "Loading rulebook — 8 active rules",
+];
 
 interface ThreadItem {
   role: "user" | "agent";
@@ -33,16 +40,21 @@ export function AgentWorkspace() {
   const [phase, setPhase] = useState<Phase>("idle");
   const [thread, setThread] = useState<ThreadItem[]>([]);
   const [visibleSteps, setVisibleSteps] = useState<ReasoningStep[]>([]);
+  const [activity, setActivity] = useState<string[]>([]);
   const [activeTask, setActiveTask] = useState("");
   const threadEndRef = useRef<HTMLDivElement>(null);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const activityTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   useEffect(() => {
     threadEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [thread, phase]);
 
   useEffect(
-    () => () => timersRef.current.forEach(clearTimeout),
+    () => () => {
+      timersRef.current.forEach(clearTimeout);
+      activityTimersRef.current.forEach(clearTimeout);
+    },
     []
   );
 
@@ -53,21 +65,32 @@ export function AgentWorkspace() {
 
       timersRef.current.forEach(clearTimeout);
       timersRef.current = [];
+      activityTimersRef.current.forEach(clearTimeout);
+      activityTimersRef.current = [];
       setInput("");
       setActiveTask(task);
       setVisibleSteps([]);
+      setActivity([]);
       setPhase("working");
+      ACTIVITY_LINES.forEach((line, i) => {
+        const timer = setTimeout(
+          () => setActivity((a) => [...a, line]),
+          150 + i * 900
+        );
+        activityTimersRef.current.push(timer);
+      });
       setThread((t) => [
         ...t,
         { role: "user", text: task },
         {
           role: "agent",
-          text: "On it. Pulling the affected entities and applicable rules.",
+          text: "On it. Pulling today's board and the applicable rules.",
         },
       ]);
 
       try {
         const decision = await reason(task);
+        activityTimersRef.current.forEach(clearTimeout);
         decision.steps.forEach((step, i) => {
           const timer = setTimeout(() => {
             setVisibleSteps((s) => [...s, step]);
@@ -75,6 +98,7 @@ export function AgentWorkspace() {
               const doneTimer = setTimeout(() => {
                 setThread((t) => [
                   ...t,
+                  { role: "agent", text: decision.summary },
                   { role: "agent", text: "", decision },
                 ]);
                 setPhase("done");
@@ -116,7 +140,7 @@ export function AgentWorkspace() {
                 </h1>
                 <p className="mt-1.5 text-[13px] leading-relaxed text-ink-secondary">
                   Describe an operational task in plain language. Vera pulls
-                  the relevant shipments, applies your rules, and shows every
+                  the relevant jobs and technicians, applies your rules, and shows every
                   step of its reasoning.
                 </p>
                 <div className="mt-6 flex flex-col items-start gap-2">
@@ -135,12 +159,16 @@ export function AgentWorkspace() {
               <div className="mx-auto max-w-xl space-y-4">
                 {thread.map((item, i) =>
                   item.decision ? (
-                    <ActionCard
-                      key={i}
-                      task={activeTask}
-                      decision={item.decision}
-                      onModify={modify}
-                    />
+                    item.decision.learnedRule ? (
+                      <LearnedRuleCard key={i} rule={item.decision.learnedRule} />
+                    ) : (
+                      <ActionCard
+                        key={i}
+                        task={activeTask}
+                        decision={item.decision}
+                        onModify={modify}
+                      />
+                    )
                   ) : item.role === "user" ? (
                     <div key={i} className="flex justify-end">
                       <p className="max-w-[85%] rounded-card bg-accent-soft px-4 py-2.5 text-[13px] leading-relaxed text-ink">
@@ -208,8 +236,23 @@ export function AgentWorkspace() {
             {phase === "working" && <VeraThinking size={14} label="Working" />}
           </div>
           <div className="flex-1 overflow-y-auto px-5 py-2">
+            {activity.length > 0 && (
+              <div className="border-b border-line py-3">
+                {activity.map((line) => (
+                  <motion.p
+                    key={line}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex items-center gap-2 py-1 font-mono text-[11px] text-ink-muted"
+                  >
+                    <span className="inline-block h-1 w-1 shrink-0 rounded-full bg-ok" />
+                    {line}
+                  </motion.p>
+                ))}
+              </div>
+            )}
             <AnimatePresence>
-              {visibleSteps.length === 0 ? (
+              {visibleSteps.length === 0 && activity.length === 0 ? (
                 <p className="py-4 text-[13px] leading-relaxed text-ink-muted">
                   Submit a task to see the agent&apos;s reasoning here, step by
                   step, with references to the exact rules and facts used.

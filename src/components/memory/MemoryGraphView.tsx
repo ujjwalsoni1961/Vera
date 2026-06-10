@@ -18,22 +18,28 @@ import { cn } from "@/lib/utils";
 // ────────────────────────────────────────────────────────────────────────────
 
 const TYPE_ORDER: Entity["type"][] = [
-  "port",
-  "zone",
-  "route",
-  "shipment",
-  "carrier",
+  "region",
+  "depot",
+  "technician",
+  "vehicle",
+  "job",
+  "site",
   "customer",
+  "sla",
+  "part",
   "rule",
 ];
 
 const TYPE_COLORS: Record<string, string> = {
-  port: "#D97706",
-  zone: "#DC2626",
-  route: "#2563EB",
-  shipment: "#18181B",
-  carrier: "#52525B",
+  region: "#D97706",
+  depot: "#A16207",
+  technician: "#2563EB",
+  vehicle: "#52525B",
+  job: "#18181B",
+  site: "#0D9488",
   customer: "#16A34A",
+  sla: "#DC2626",
+  part: "#A1A1AA",
   rule: "#7C3AED",
 };
 

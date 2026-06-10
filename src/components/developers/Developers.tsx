@@ -12,17 +12,17 @@ const REQUEST_SNIPPET = `POST /v1/reason
 Content-Type: application/json
 
 {
-  "task": "Port of Rotterdam is on strike until Thursday — handle today's affected shipments.",
-  "context": { "workspace": "nordretail-eu-central" }
+  "task": "Mikko Virtanen called in sick — reassign his jobs for today.",
+  "context": { "workspace": "takapulpetti-eu-north" }
 }`;
 
 const RESPONSE_SNIPPET = `{
   "summary": "...",
-  "action": "Reroute Shipment 402 to Route B and notify TechNord Oy ...",
-  "references": [{ "id": "R7", "type": "rule" }, { "id": "R3", "type": "rule" }],
+  "action": "Reassign WO-4807 and WO-4811 to Sami Nieminen, WO-4815 to Anna Mäkelä ...",
+  "references": [{ "id": "R2", "type": "rule" }, { "id": "R4", "type": "rule" }],
   "steps": [
-    { "text": "Identified 6 active shipments routed through Rotterdam ...",
-      "references": [{ "id": "Port-Rotterdam", "type": "port" }] }
+    { "text": "Mikko Virtanen has four open jobs today out of Konala depot ...",
+      "references": [{ "id": "Mikko Virtanen", "type": "technician" }] }
   ],
   "status": "recommended"
 }`;
@@ -36,7 +36,7 @@ export function Developers() {
     setResult(null);
     try {
       const decision = await reason(
-        "Port of Rotterdam is on strike until Thursday — handle today's affected shipments."
+        "Mikko Virtanen called in sick — reassign his jobs for today."
       );
       setResult(decision);
     } finally {

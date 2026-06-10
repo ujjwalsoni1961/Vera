@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Plus } from "lucide-react";
+import { Download, Plus } from "lucide-react";
 import { PageHeader } from "@/components/pages/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -14,6 +14,7 @@ import {
   type ParsedRule,
   type Rule,
 } from "@/lib/engine";
+import { ImportRulesModal } from "./ImportRulesModal";
 
 type AddPhase = "closed" | "input" | "parsing" | "confirm" | "saving";
 
@@ -22,6 +23,7 @@ export function Rulebook() {
   const [phase, setPhase] = useState<AddPhase>("closed");
   const [draft, setDraft] = useState("");
   const [parsed, setParsed] = useState<ParsedRule | null>(null);
+  const [importing, setImporting] = useState(false);
 
   const refresh = useCallback(() => {
     listRules().then(setRules);
@@ -54,10 +56,16 @@ export function Rulebook() {
         description="Business rules written in plain English, translated into a machine-checkable form. The solver applies every active rule to every decision."
         action={
           phase === "closed" ? (
-            <Button variant="primary" onClick={() => setPhase("input")}>
-              <Plus className="h-3.5 w-3.5" strokeWidth={2} />
-              Add rule
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setImporting(true)}>
+                <Download className="h-3.5 w-3.5" strokeWidth={2} />
+                Import
+              </Button>
+              <Button variant="primary" onClick={() => setPhase("input")}>
+                <Plus className="h-3.5 w-3.5" strokeWidth={2} />
+                Add rule
+              </Button>
+            </div>
           ) : undefined
         }
       />
@@ -74,7 +82,7 @@ export function Rulebook() {
               className="mt-3"
               value={draft}
               autoFocus
-              placeholder="e.g. Pharmaceutical cargo must clear customs within 24 hours of arrival."
+              placeholder="e.g. Emergency callouts at daycare sites must be staffed before 15:00."
               onChange={(e) => setDraft(e.target.value)}
               disabled={phase === "parsing" || phase === "saving"}
             />
@@ -149,6 +157,11 @@ export function Rulebook() {
                   <span className="text-[13px] leading-relaxed text-ink">
                     {rule.naturalLanguage}
                   </span>
+                  {rule.source && rule.source !== "workspace" && (
+                    <span className="ml-2 rounded-full border border-line bg-page px-1.5 py-0.5 align-middle text-[10px] text-ink-muted">
+                      {rule.source === "chat" ? "learned in chat" : "imported"}
+                    </span>
+                  )}
                 </td>
                 <td className="px-5 py-4 align-top">
                   <pre className="overflow-x-auto font-mono text-xxs leading-relaxed text-ink-secondary">
@@ -166,6 +179,13 @@ export function Rulebook() {
           </tbody>
         </table>
       </Card>
+
+      {importing && (
+        <ImportRulesModal
+          onClose={() => setImporting(false)}
+          onImported={refresh}
+        />
+      )}
     </div>
   );
 }

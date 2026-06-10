@@ -53,3 +53,18 @@ body {
 .vera-breathe {
   animation: vera-breathe 1.6s ease-in-out infinite;
 }
+
+/* Leaflet tooltips for route widgets */
+.vera-map-tooltip {
+  background: #ffffff;
+  border: 1px solid #ececec;
+  border-radius: 6px;
+  box-shadow: none;
+  color: #18181b;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 10px;
+  padding: 2px 6px;
+}
+.vera-map-tooltip::before {
+  display: none;
+}
