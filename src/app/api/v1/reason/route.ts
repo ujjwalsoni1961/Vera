@@ -263,7 +263,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Missing 'task'." }, { status: 400 });
   }
 
-  if (!isMinimaxConfigured()) {
+  // Curated scenarios answer instantly and deterministically; the LLM handles
+  // everything else against the same snapshot.
+  const q = task.toLowerCase();
+  if (
+    !isMinimaxConfigured() ||
+    scenarios.some((sc) => sc.match.some((m) => q.includes(m)))
+  ) {
     return NextResponse.json(scriptedDecision(task));
   }
 
@@ -276,7 +282,7 @@ export async function POST(req: Request) {
           content: `${snapshot()}\n\nCurrent local time: ${new Date().toLocaleString("en-GB", { timeZone: "Europe/Helsinki" })}\n\nTASK: ${task}`,
         },
       ],
-      { maxTokens: 1900, temperature: 0.15, timeoutMs: 45000 }
+      { maxTokens: 2500, temperature: 0.15, timeoutMs: 50000 }
     );
     const json = extractJson(raw) as Record<string, unknown>;
 

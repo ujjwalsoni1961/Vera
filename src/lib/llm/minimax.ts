@@ -62,7 +62,8 @@ export async function minimaxChat(
     }
     const content: string | undefined = data?.choices?.[0]?.message?.content;
     if (!content) throw new MinimaxError("MiniMax returned empty content");
-    return content;
+    // Reasoning models prepend a <think> block; strip it before parsing.
+    return content.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
   } finally {
     clearTimeout(timer);
   }
