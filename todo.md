@@ -1,25 +1,15 @@
-# Vera — Logistics Intelligence Platform
+# Vera v2 rebuild — agent-first, Pinecone-console aesthetic
 
-Build a production-quality neuro-symbolic enterprise B2B SaaS demo.
-Stack: Next.js (App Router) + TypeScript + Tailwind. z3-WASM validation. MiniMax M3 parser.
-Theme: Pinecone-style bright/clean. Push each milestone to main on ujjwalsoni1961/Vera. Deploy to Vercel (project: vera).
+Spec: Chandani's 2026-06-10 prompt + AIoD proposal PDF. No emojis, no badges, indigo accent #2563EB, white/#FAFAFA, Inter + JetBrains Mono, shadcn-style components.
 
-## Milestones
-- [ ] M1 — Scaffold + design system (Next.js, fonts, bright theme, sidebar+topbar shell). First Vercel deploy.
-- [ ] M2 — Repository architecture + InMemoryMockRepository + realistic seed data.
-- [ ] M3 — Tool layer (Shipment/Route/Risk/CustomerImpact) + execution framework.
-- [ ] M4 — LLM parser (MiniMax M3) NL -> structured JSON logic (+ deterministic fallback).
-- [ ] M5 — Deterministic validation layer (z3-WASM) + reasoning traces.
-- [ ] M6 — Orchestration pipeline (NL->parse->tools->validate->recommend->audit->memory) <4s.
-- [ ] M7 — Dashboard panels (KPI, agent exec, reasoning trace, tool exec, memory, audit, connected systems, approval).
-- [ ] M8 — Demo scenario (Voyage-402/Brenner Pass), README, Dockerfile, final prod deploy.
+- [ ] M1: deps (framer-motion, reactflow, radix popover/dropdown), design tokens, fonts, ui primitives (button/card/popover/table/dot), new shell (sidebar: Agent/Rulebook/Memory/Audit/Developers/Settings + topbar) — push
+- [ ] M2: shared types (Rule/Entity/ReasoningStep/Decision/AuditEntry), lib/engine.ts (mock + live via ENGINE_MODE), Rotterdam seed (rules R1–R7+, entities, audit entries), /api/v1/reason — push
+- [ ] M3: Agent Workspace hero: two-pane, task thread + streaming reasoning panel, reference chips w/ popovers, recommended-action card (Approve/View reasoning/Modify), solver caption — push
+- [ ] M4: Rulebook: table + add-rule parse→confirm→save — push
+- [ ] M5: Memory knowledge graph (reactflow) + node detail panel — push
+- [ ] M6: Audit table + row expand (reuse reasoning panel); Developers (snippet + Run); Settings (autonomy, connected systems, EU residency) — push
+- [ ] M7: tone audit (no emojis/badges), responsive, build clean, remove dead code (old dashboard/KPIs) — push
+- [ ] M8: deploy to Vercel (same project), verify flagship Rotterdam scenario live — needs approval
 
-## Key decisions
-- LLM never makes operational decisions. z3 deterministic layer decides.
-- z3-solver npm (WASM) inside Next API routes + pure-TS fallback.
-- MiniMax M3 API key -> env var only, NEVER commit.
-- Whole workflow under 4s, Vercel serverless-safe.
-
-## Notes
-- Repo was empty. Node installed to /work/tools/node (not in repo).
-- API base for MiniMax: verify endpoint.
+Keep: z3engine, minimax parser, repositories/tools (rewire as live mode). Old pages (tasks/tools/agent-runs/KPIs) removed.
+Flagship: "Port of Rotterdam is on strike until Thursday — handle today's affected shipments." → exact steps from spec → Route B for Shipment 402 → Approve → audit.
