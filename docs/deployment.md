@@ -117,7 +117,7 @@ self-hosted model, no data leaves the deployment at all.
 
 ## 6. The public demonstration deployment
 
-The demonstration console (https://vera-three-pi.vercel.app) is a
+The demonstration console (https://vera.nex0.tech) is a
 self-contained build of this repository: the console plus a console-hosted
 reasoning route running the same LLM-translation + Z3-verification pipeline
 against a synthetic workspace. It exists so the full decision path can be

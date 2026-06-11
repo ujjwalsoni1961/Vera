@@ -6,7 +6,7 @@ structure the operator console renders.
 
 Base URL: customer-specific, e.g. `https://<workspace>.vera.nex0.tech/api`.
 The public demonstration console hosts an open, rate-limited subset at
-`https://vera-three-pi.vercel.app/api/v1` against synthetic data.
+`https://vera.nex0.tech/api/v1` against synthetic data.
 
 ## Authentication
 

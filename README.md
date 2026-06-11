@@ -16,7 +16,7 @@ Vera is developed and operated by [Nex0 Oy](https://nex0.tech) (Finland,
 Business ID 3589366-2). It has been in production with paying customers since
 2025.
 
-**Live demonstration console:** https://vera-three-pi.vercel.app
+**Live demonstration console:** https://vera.nex0.tech
 (synthetic demonstration workspace; see [Scope of this repository](#scope-of-this-repository))
 
 ## Why this architecture

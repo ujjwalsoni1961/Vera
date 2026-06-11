@@ -109,7 +109,7 @@ engine release:
 ## 5. Public demonstration
 
 A complete, self-contained demonstration of the decision path is publicly
-accessible at https://vera-three-pi.vercel.app — a synthetic field-service
+accessible at https://vera.nex0.tech — a synthetic field-service
 workspace (fictional company, realistic Finnish operational geography)
 running the live LLM-translation + Z3-verification pipeline. Reviewers can:
 

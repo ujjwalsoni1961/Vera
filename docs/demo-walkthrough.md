@@ -1,6 +1,6 @@
 # Vera — Demonstration Walkthrough
 
-The public demonstration console (https://vera-three-pi.vercel.app) runs a
+The public demonstration console (https://vera.nex0.tech) runs a
 synthetic workspace: a fictional Finnish building-systems field-service
 operator (heat pumps, gas boilers, ventilation, refrigeration) with two
 regions, three depots, eight technicians, six vans and a day's board of work
