@@ -11,6 +11,13 @@ import { ComposerIntegrations } from "./ComposerIntegrations";
 import { VeraMark, VeraThinking } from "@/components/layout/Logo";
 import { reason, type Decision, type ReasoningStep } from "@/lib/engine";
 
+const EXAMPLE_TASKS = [
+  "Move WO-4811 to tomorrow morning and check nothing else slips.",
+  "Who can cover the Tampere region next Friday?",
+  "Does WO-4818 have all required parts on the assigned van?",
+  "Summarize today's completed jobs for the dispatch report.",
+];
+
 type Phase = "idle" | "working" | "done" | "error";
 
 const ACTIVITY_LINES = [
@@ -136,6 +143,17 @@ export function AgentWorkspace() {
                   the relevant jobs and technicians, applies your rules, and shows every
                   step of its reasoning.
                 </p>
+                <div className="mt-6 flex flex-col items-start gap-2">
+                  {EXAMPLE_TASKS.map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => submit(t)}
+                      className="rounded-md border border-line bg-surface px-3 py-1.5 text-left text-[13px] text-ink-secondary transition-colors hover:border-line-strong hover:text-ink"
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
               </div>
             ) : (
               <div className="mx-auto max-w-xl space-y-4">
