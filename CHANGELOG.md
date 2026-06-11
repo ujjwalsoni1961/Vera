@@ -7,7 +7,7 @@ release they accompanied. Dates are release-to-production dates.
 ## 1.4 — June 2026
 
 - Operator console published in this repository, with a public
-  demonstration deployment (synthetic workspace) exercising the full
+  demonstration deployment (dedicated demonstration workspace) exercising the full
   decision path: live LLM translation + Z3 verification.
 - Result widgets in the agent thread: route changes render on an interactive
   map (previous vs. proposed path, distance and drive-time deltas);

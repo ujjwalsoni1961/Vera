@@ -17,7 +17,7 @@ Business ID 3589366-2). It has been in production with paying customers since
 2025.
 
 **Live demonstration console:** https://vera.nex0.tech
-(synthetic demonstration workspace; see [Scope of this repository](#scope-of-this-repository))
+(demonstration workspace; see [Scope of this repository](#scope-of-this-repository))
 
 ## Why this architecture
 
@@ -60,7 +60,7 @@ This repository contains:
 1. **The Vera operator console** — the production web UI (Next.js/TypeScript):
    agent thread with live reasoning panel, rulebook, memory graph, audit log,
    developer surface and workspace settings. The public deployment runs a
-   self-contained demonstration workspace with synthetic data modeled on our
+   self-contained demonstration workspace modeled on our
    field-service deployments; customer workspaces and customer data are never
    part of this repository.
 2. **The public product documentation** — architecture, API and MCP

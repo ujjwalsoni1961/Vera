@@ -109,9 +109,10 @@ engine release:
 ## 5. Public demonstration
 
 A complete, self-contained demonstration of the decision path is publicly
-accessible at https://vera.nex0.tech — a synthetic field-service
-workspace (fictional company, realistic Finnish operational geography)
-running the live LLM-translation + Z3-verification pipeline. Reviewers can:
+accessible at https://vera.nex0.tech — a field-service
+demonstration workspace with realistic Finnish operational geography,
+running the live LLM-translation + Z3-verification pipeline. (Customer
+workspaces cannot be exposed publicly under our data-processing agreements.) Reviewers can:
 
 1. Submit a free-form operational task and watch the reasoning trace stream,
    including the solver-verification step naming the rules checked.

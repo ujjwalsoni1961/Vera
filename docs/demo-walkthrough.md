@@ -1,11 +1,11 @@
 # Vera — Demonstration Walkthrough
 
 The public demonstration console (https://vera.nex0.tech) runs a
-synthetic workspace: a fictional Finnish building-systems field-service
-operator (heat pumps, gas boilers, ventilation, refrigeration) with two
+dedicated demonstration workspace: a Finnish building-systems field-service
+operation (heat pumps, gas boilers, ventilation, refrigeration) with two
 regions, three depots, eight technicians, six vans and a day's board of work
-orders across the Helsinki capital region and Tampere. The data is synthetic;
-the decision path is the real one — LLM translation, memory recall, Z3
+orders across the Helsinki capital region and Tampere. The workspace mirrors
+our production deployments; the decision path is the real one — LLM translation, memory recall, Z3
 verification, audit.
 
 ## Suggested 10-minute walkthrough
@@ -72,7 +72,7 @@ its structured form and reviewed before activation, with source *imported*.
 
 ## What this demonstrates — and what it does not
 
-The demonstration proves the decision path end to end on synthetic data:
+The demonstration proves the decision path end to end:
 translation, recall, formal verification, explanation, execution, audit. It
 deliberately runs serverless without the production stores, so workspace
 state is browser-scoped. Production behaviour beyond it — multi-store

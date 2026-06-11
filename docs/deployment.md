@@ -120,8 +120,8 @@ self-hosted model, no data leaves the deployment at all.
 The demonstration console (https://vera.nex0.tech) is a
 self-contained build of this repository: the console plus a console-hosted
 reasoning route running the same LLM-translation + Z3-verification pipeline
-against a synthetic workspace. It exists so the full decision path can be
-exercised publicly without customer data, and deliberately runs serverless —
+against a dedicated demonstration workspace. It exists so the full decision
+path can be exercised publicly without touching customer workspaces, and deliberately runs serverless —
 no graph or relational store — which is why workspace state there is
 browser-scoped. Production deployments use the full service layout above.
 

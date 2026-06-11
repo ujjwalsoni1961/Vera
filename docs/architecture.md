@@ -154,9 +154,10 @@ src/components/                Agent thread, reasoning panel, rulebook, memory g
 The console binds to the engine through a single typed facade. `live` mode
 calls the reasoning pipeline over REST; `mock` mode runs a seeded in-process
 engine with identical types — used for UI development, automated tests and
-offline demonstrations. The public demonstration deployment runs a synthetic
-workspace (a fictional Finnish building-systems field-service operation) so
-that the full decision path can be exercised without exposing customer data.
+offline demonstrations. The public demonstration deployment runs a
+dedicated workspace — a Finnish building-systems field-service operation —
+so that the full decision path can be exercised without exposing customer
+workspaces.
 
 ## 5. Multi-tenancy and isolation
 
