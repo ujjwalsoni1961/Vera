@@ -54,6 +54,16 @@ body {
   animation: vera-breathe 1.6s ease-in-out infinite;
 }
 
+@keyframes vera-spin {
+  to { transform: rotate(360deg); }
+}
+.vera-spin {
+  animation: vera-spin 1s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .vera-spin { animation: none; }
+}
+
 /* Leaflet tooltips for route widgets */
 .vera-map-tooltip {
   background: #ffffff;
