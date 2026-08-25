@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import Script from "next/script";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,7 +28,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrains.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Script
+          src="https://widget.knudge.nex0.tech/loader.js"
+          strategy="afterInteractive"
+          data-public-key="kn_pk_mqwmku8tjdi9u7xzvudbv591"
+          data-position="bottom-right"
+        />
+      </body>
     </html>
   );
 }
